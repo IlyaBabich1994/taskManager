@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <style>
+
+    </style>
+    <meta charset="UTF-8">
+  <title th:text="${task.name} + ' - User Page'">User Page</title>
+</head>
+<body>
+<h1 th:text="${task.name}">Task Page</h1>
+<table>
+  <tr>
+    <td>Name:</td>
+    <td th:text="${task.name}">Task Name</td>
+  </tr>
+  <tr>
+    <td>Description:</td>
+    <td th:text="${task.description}">Task Description</td>
+  </tr>
+  <tr>
+    <td>Status:</td>
+    <td th:text="${task.status}">Task Status</td>
+  </tr>
+  <tr>
+    <td>Project:</td>
+    <td th:text="${task.project}">Task Project</td>
+  </tr>
+
+</body>
+</html>

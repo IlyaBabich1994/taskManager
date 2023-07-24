@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Task Page</title>
+  <style>
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    th, td {
+      padding: 8px;
+      text-align: left;
+      border-bottom: 1px solid #ddd;
+    }
+
+    th {
+      background-color: #f2f2f2;
+    }
+
+    button {
+      margin-bottom: 10px;
+    }
+    /* Стили формы */
+    .task-form {
+      display: none; /* Скрыть форму по умолчанию */
+    }
+
+    .task-form label {
+      display: block;
+      margin-bottom: 5px;
+    }
+
+    .task-form input[type="text"] {
+      width: 100%;
+      padding: 5px;
+      margin-bottom: 10px;
+    }
+  </style>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script>
+    $(document).ready(function() {
+      // Обработчик клика на кнопку "Show Task by ID"
+      $("#showByIdBtn").click(function() {
+        const taskId = $("#taskIdInput").val();
+        $.get("/api/tasks/showById?id=" + taskId, function(data) {
+          // Обработка полученных данных
+          // Например, можно вывести данные в таблицу
+          const taskRow = "<tr>" +
+                  "<td>" + data.id + "</td>" +
+                  "<td>" + data.name + "</td>" +
+                  "<td>" + data.description + "</td>" +
+                  "<td>" + data.project + "</td>" +
+                  "<td>" + data.status + "</td>" +
+                  "</tr>";
+          $("#taskTable tbody").html(taskRow);
+        });
+      });
+
+      // Обработчик клика на кнопку "Show All Tasks"
+      $("#showAllBtn").click(function() {
+        $.get("/api/tasks/all", function(data) {
+          // Обработка полученных данных
+          // Например, можно вывести данные в таблицу
+          var tasksRows = "";
+          data.forEach(function(task) {
+            tasksRows += "<tr>" +
+                    "<td>" + tasks.name + "</td>" +
+                    "<td>" + tasks.description + "</td>" +
+                    "<td>" + tasks.project + "</td>" +
+                    "<td>" + tasks.status + "</td>" +
+                    "</tr>";
+          });
+          $("#taskTable tbody").html(tasksRows);
+        });
+      });
+
+      // Показать новую форму сохранения задачи
+      $("#showNewFormBtn").click(function() {
+        $(".task-form-new").show(); // Показать новую форму
+      });
+
+      // Скрыть новую форму сохранения задачи
+      $("#cancelNewBtn").click(function() {
+        $(".task-form-new").hide(); // Скрыть новую форму
+      });
+
+      // Обработчик отправки формы сохранения задачи
+      $("#saveTaskForm").click(function() {
+        const newName = $("#newNameInput").val();
+        const newDescription = $("#newDescriptionInput").val();
+        const newStatus = $("#newStatus").val();
+        const newProject = $("#newProject").val();
+
+        const newTask = {
+          name: newName,
+          description: newDescription,
+          status: newStatus,
+          project: newProject
+        };
+
+        $.ajax({
+          url: "/api/tasks/save",
+          type: "POST",
+          contentType: "application/json",
+          data: JSON.stringify(newTask),
+          success: function(data) {
+            // Обработка успешного сохранения задачи
+            // Например, можно обновить таблицу с задачами
+            const taskRow = "<tr>" +
+                    "<td>" + data.name + "</td>" +
+                    "<td>" + data.description + "</td>" +
+                    "<td>" + data.project + "</td>" +
+                    "<td>" + data.status + "</td>" +
+                    "</tr>";
+            $("#taskTable tbody").append(taskRow);
+
+            // Очистить поля формы
+            $("#newNameInput").val("");
+            $("#newDescriptionInput").val("");
+            $("#newStatus").val("");
+            $("#newProject").val("");
+
+            // Скрыть форму
+            $(".task-form-new").hide();
+          }
+        });
+      });
+    });
+  </script>
+</head>
+<body>
+<h1>Task Page</h1>
+<input type="text" id="taskIdInput" placeholder="Enter Task ID">
+<button id="showByIdBtn">Show Task by ID</button>
+<button id="showAllBtn">Show All Tasks</button>
+<button id="showNewFormBtn">Add New Task</button>
+<form class="task-form-new" style="display: none;">
+  <label for="newNameInput">Name:</label>
+  <input type="text" id="newNameInput" name="name">
+
+  <label for="newDescriptionInput">Description:</label>
+  <input type="text" id="newDescriptionInput" name="description">
+
+  <label for="newStatus">Status:</label>
+  <input type="text" id="newStatus" name="status">
+
+  <label for="newProject">Project:</label>
+  <input type="text" id="newProject" name="project" >
+
+  <button type="button" id="saveTaskForm">Save</button>
+  <button type="button" id="cancelNewBtn">Cancel</button>
+</form>
+<table id="taskTable">
+  <thead>
+  <tr>
+    <th>Name</th>
+    <th>Description</th>
+    <th>Project</th>
+    <th>Status</th>
+    <!-- Добавьте остальные столбцы по необходимости -->
+  </tr>
+  </thead>
+  <tbody>
+  <!-- Здесь будут добавляться строки с данными из запроса -->
+  </tbody>
+</table>
+</body>
+</html>
